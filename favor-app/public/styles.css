@@ -277,12 +277,6 @@ button.chip.on{animation:chipPop .35s ease-out}
 @media(max-width:560px){.s2{display:none}.a-sticker{width:58%;padding:10px 12px}.a-sticker .chip{font-size:11px;padding:4px 8px}}
 .sparkle{width:24px;height:24px;flex:none}
 
-/* real-place section */
-.place-fig{display:grid;gap:28px;align-items:center;grid-template-columns:1fr}
-.place-fig img{display:block;width:100%;height:auto;border-radius:var(--r-lg);border:3.5px solid var(--ink);box-shadow:var(--shadow-pop-lg)}
-@media(min-width:820px){.place-fig{grid-template-columns:1.1fr .9fr}}
-.place-cap p.eyebrow{margin-bottom:0}
-
 /* steps */
 .spot{width:120px;height:100px;display:block;margin-bottom:6px}
 .step{transition:transform .2s ease,box-shadow .2s ease,translate .8s cubic-bezier(.2,.9,.3,1.15)}

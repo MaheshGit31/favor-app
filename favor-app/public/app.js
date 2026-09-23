@@ -261,8 +261,7 @@ function landing(){
    '<div class="a-sticker s1"><span class="chip need">Needs a hand</span><h3>Borrow a ladder this weekend</h3><div class="row wrapf">'+rateChip(0,"flat","Budget ")+'<span class="chip">Clover Lane</span></div></div>'+
    '<div class="a-sticker s2"><span class="chip skill">Skill</span><h3>Lawn care, weekends</h3><div class="row wrapf">'+rateChip(35,"hr")+'<span class="chip">Maple Ct</span></div></div></div></section></div>'+
    '<div class="ticker" aria-hidden="true"><div>'+tk+tk+'</div></div>'+
-   '<div class="wrap"><section class="section place"><div class="place-fig rv"><img src="/images/sutton-fields-sign.jpg" alt="The Sutton Fields neighborhood entrance sign" loading="lazy"><div class="place-cap"><p class="eyebrow">Right here in Sutton Fields</p><h2 style="margin-top:6px">A real neighborhood, not an app full of strangers.</h2><p class="muted" style="font-size:17px">Favor. is just for the folks who live here &mdash; so the person borrowing your ladder is the same one who waves at you on trash day.</p></div></div></section>'+
-   '<section class="section" id="how"><p class="eyebrow">How it works</p><h2 class="rv" style="margin-top:10px">Three moves. That is the whole app.</h2>'+
+   '<div class="wrap"><section class="section" id="how"><p class="eyebrow">How it works</p><h2 class="rv" style="margin-top:10px">Three moves. That is the whole app.</h2>'+
    '<div class="steps">'+
    '<div class="card step rv">'+G.megaphone()+'<p class="eyebrow">Step 1</p><h3>Post what you need</h3></div>'+
    '<div class="card step rv" style="transition-delay:.12s">'+G.toolbox()+'<p class="eyebrow">Step 2</p><h3>List what you can do</h3></div>'+
