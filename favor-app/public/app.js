@@ -219,8 +219,14 @@ function iconName(t){t=t.toLowerCase();
   if(/deck|paint|stain/.test(t))return "brush";if(/math|tutor|tax|book|lesson/.test(t))return "book";
   if(/lawn|leaf|garden/.test(t))return "leaf";if(/photo|camera/.test(t))return "camera";
   if(/ladder/.test(t))return "ladder";return "wrench"}
-function ico(text,cls){var n=iconName(text),k=0;for(var i=0;i<n.length;i++)k+=n.charCodeAt(i);
+var ICON_KEYS=["speaker","mic","paw","cake","bike","couch","brush","book","leaf","camera","ladder","wrench"];
+function ico(text,cls,forced){var n=(forced&&ICOS[forced])?forced:iconName(text),k=0;for(var i=0;i<n.length;i++)k+=n.charCodeAt(i);
   return '<div class="ib '+(cls||"")+' ib'+(k%4)+'"><svg viewBox="0 0 48 48" aria-hidden="true">'+ICOS[n]+'</svg></div>'}
+function iconPicker(sel){
+  return '<div class="field"><span class="lbl">Icon</span><div class="iconpick" role="group" aria-label="Choose an icon">'+
+   '<button class="ipk'+(!sel?" on":"")+'" data-a="picon" data-v="" aria-pressed="'+!sel+'" aria-label="Auto">'+'<span class="ipk-auto">Auto</span></button>'+
+   ICON_KEYS.map(function(k){return '<button class="ipk'+(sel===k?" on":"")+'" data-a="picon" data-v="'+k+'" aria-pressed="'+(sel===k)+'" aria-label="'+k+'"><svg viewBox="0 0 48 48" aria-hidden="true">'+ICOS[k]+'</svg></button>'}).join("")+
+   '</div></div>'}
 
 /* ---------- motion helpers ---------- */
 var RM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -251,11 +257,12 @@ function landing(){
    '<h1 style="margin-top:12px">'+h+'</h1>'+
    '<div class="cta"><button class="btn lg gbtn" data-a="google" data-v="signup"><span class="gmark">G</span>Continue with Google</button><a class="btn lg sun" href="#how" data-a="scroll" data-v="how">See how it works</a></div>'+
    '</div>'+
-   '<div class="art" id="art">'+G.hero()+
+   '<div class="art" id="art"><img class="heroPhoto" src="/images/hero-sutton-fields.jpg" alt="A street in Sutton Fields lined with neighboring homes and driveways" loading="eager" width="1200" height="1200">'+
    '<div class="a-sticker s1"><span class="chip need">Needs a hand</span><h3>Borrow a ladder this weekend</h3><div class="row wrapf">'+rateChip(0,"flat","Budget ")+'<span class="chip">Clover Lane</span></div></div>'+
    '<div class="a-sticker s2"><span class="chip skill">Skill</span><h3>Lawn care, weekends</h3><div class="row wrapf">'+rateChip(35,"hr")+'<span class="chip">Maple Ct</span></div></div></div></section></div>'+
    '<div class="ticker" aria-hidden="true"><div>'+tk+tk+'</div></div>'+
-   '<div class="wrap"><section class="section" id="how"><p class="eyebrow">How it works</p><h2 class="rv" style="margin-top:10px">Three moves. That is the whole app.</h2>'+
+   '<div class="wrap"><section class="section place"><div class="place-fig rv"><img src="/images/sutton-fields-sign.jpg" alt="The Sutton Fields neighborhood entrance sign" loading="lazy"><div class="place-cap"><p class="eyebrow">Right here in Sutton Fields</p><h2 style="margin-top:6px">A real neighborhood, not an app full of strangers.</h2><p class="muted" style="font-size:17px">Favor. is just for the folks who live here &mdash; so the person borrowing your ladder is the same one who waves at you on trash day.</p></div></div></section>'+
+   '<section class="section" id="how"><p class="eyebrow">How it works</p><h2 class="rv" style="margin-top:10px">Three moves. That is the whole app.</h2>'+
    '<div class="steps">'+
    '<div class="card step rv">'+G.megaphone()+'<p class="eyebrow">Step 1</p><h3>Post what you need</h3></div>'+
    '<div class="card step rv" style="transition-delay:.12s">'+G.toolbox()+'<p class="eyebrow">Step 2</p><h3>List what you can do</h3></div>'+
@@ -301,7 +308,7 @@ function listingCard(l,demo){
   var chips=(l.kind==="need"?rateChip(l.r,l.u,"Budget "):rateChip(l.r,l.u));
   var cta=mine?'<button class="btn sm quiet" data-a="del-listing" data-id="'+l.id+'">Remove</button>':
     '<button class="btn sm '+(l.kind==="need"?"need":"sun")+'" data-a="msg" data-id="'+l.by+'" data-ref="'+esc(l.title)+'"'+(demo?' data-demo="1"':"")+'>'+ICON.msg+(l.kind==="need"?"I can help":l.kind==="borrow"?"I can lend":"Message "+esc(name.split(" ")[0]))+'</button>';
-  return '<article class="card listing '+(l.kind==="need"?"need":"")+'"><div class="lh">'+ico(l.title+" "+l.body)+'<div class="grow"><p class="eyebrow">'+kindLabel+' &middot; '+esc(street)+'</p><h3>'+esc(l.title)+'</h3></div></div><p class="muted">'+esc(l.body)+'</p><div class="row wrapf">'+(l.kind==="need"?'<span class="chip need">Needs a hand</span>':"")+chips+'</div>'+
+  return '<article class="card listing '+(l.kind==="need"?"need":"")+'"><div class="lh">'+ico(l.title+" "+l.body,"",l.icon)+'<div class="grow"><p class="eyebrow">'+kindLabel+' &middot; '+esc(street)+'</p><h3>'+esc(l.title)+'</h3></div></div><p class="muted">'+esc(l.body)+'</p><div class="row wrapf">'+(l.kind==="need"?'<span class="chip need">Needs a hand</span>':"")+chips+'</div>'+
    '<div class="foot"><div class="who">'+av(who,"s")+'<div><b>'+esc(name)+(mine?'<span class="tag-you">You</span>':"")+'</b><span class="muted sm">'+l.when+'</span></div></div><div class="row wrapf" style="gap:8px">'+cta+xtra+'</div></div></article>'
 }
 function postCard(p){
@@ -360,9 +367,9 @@ function renderMain(){
   var composer='<section class="card cmp stack" style="gap:12px"><label class="lbl" for="np">Share something with the street</label><textarea class="in" id="np" maxlength="300" placeholder="Thank a neighbor, announce a swap, ask for tips..." data-in="draft">'+esc(S.draft)+'</textarea>'+
    (S.pimgUrl?'<div class="pprev"><img src="'+S.pimgUrl+'" alt="Photo you are about to post"><button class="btn sm quiet" data-a="rm-pimg">Remove photo</button></div>':"")+
    '<div class="row" style="justify-content:space-between"><div class="row wrapf" style="gap:10px"><label class="btn sm sun" for="pimgfile" tabindex="0">'+ICON.img+(S.pimgUrl?"Change photo":"Add photo")+'</label><span class="muted sm">Photos up to 30 MB</span></div><div class="row" style="gap:12px"><span class="cnt'+(S.draft.length>=300?" over":"")+'" id="cnt">'+S.draft.length+'/300</span><button class="btn sm" data-a="post-text">Post</button></div></div><input type="file" id="pimgfile" accept="image/*" hidden></section>';
-  var F=[["all","All"],["post","Posts"],["need","Needs a hand"],["borrow","Borrow"],["offer","Offers"],["free","Free only"]];
+  var F=[["all","All"],["post","Posts"],["need","Needs a hand"],["offer","Offers"],["free","Free only"]];
   var items=[];
-  S.listings.forEach(function(l){if(S.filter==="all"||(S.filter==="free"?!l.r:l.kind===S.filter))items.push({ts:l.ts||0,h:function(){return listingCard(l)}})});
+  S.listings.forEach(function(l){var pass=S.filter==="all"||(S.filter==="free"?!l.r:S.filter==="need"?(l.kind==="need"||l.kind==="borrow"):l.kind===S.filter);if(pass)items.push({ts:l.ts||0,h:function(){return listingCard(l)}})});
   if(S.filter==="all"||S.filter==="post")S.posts.forEach(function(p){items.push({ts:p.ts||0,h:function(){return postCard(p)}})});
   items.sort(function(a,b){return b.ts-a.ts});
   el.innerHTML=welcome+composer+'<div class="chips" role="group" aria-label="Filter the feed">'+F.map(function(f){return '<button class="chip'+(S.filter===f[0]?" on":"")+'" data-a="filter" data-v="'+f[0]+'" aria-pressed="'+(S.filter===f[0])+'">'+f[1]+'</button>'}).join("")+'</div>'+
@@ -392,12 +399,13 @@ function openInbox(){
 function setBadge(){var b=$("#badge");if(!b)return;b.textContent=S.unread;b.hidden=!S.unread}
 function refreshInbox(){if(S.view!=="home")return;api("GET","/api/conversations").then(function(r){S.unread=r.unread;setBadge()}).catch(function(){})}
 function needModal(){
-  modal('<h2>New post</h2><div class="field"><span class="lbl">What kind of post?</span><div class="seg" role="group"><button class="on" data-a="kind" data-v="need">Needs a hand</button><button data-a="kind" data-v="borrow">Borrow</button><button data-a="kind" data-v="offer">Offer help</button></div></div>'+
+  modal('<h2>New post</h2><div class="field"><span class="lbl">What do you want to do?</span><div class="seg" role="group"><button class="on" data-a="kind" data-v="need">I need help</button><button data-a="kind" data-v="offer">I can help</button></div></div>'+
    '<div class="field"><label for="nt">Title</label><input class="in" id="nt" maxlength="100" placeholder="e.g. Borrow a ladder for Saturday"></div>'+
    '<div class="field"><label for="nb">Details</label><textarea class="in" id="nb" maxlength="600" placeholder="When, where, and anything they should bring"></textarea></div>'+
+   iconPicker(null)+
    '<div class="field"><span class="lbl" id="ratelbl">Budget (Free to $500)</span>'+rateSlider("need",0,"flat")+'<div id="unitrow" hidden><span class="seg" role="group" aria-label="Rate type"><button data-a="sunit" data-v="hr">per hour</button><button class="on" data-a="sunit" data-v="flat">flat</button></span></div></div>'+
    '<div class="row end"><button class="btn quiet" data-a="close">Cancel</button><button class="btn need" data-a="save-need">Post it</button></div>');
-  modal.kind="need";modal.unit="flat";
+  modal.kind="need";modal.unit="flat";modal.icon=null;
 }
 function skillModal(sk){
   var u=sk?sk.u:"hr";modal.editId=sk?sk.id:null;
@@ -451,7 +459,7 @@ function byUser(id){return id===S.me.id?"me":id}
 function loadAll(){
   return Promise.all([api("GET","/api/people"),api("GET","/api/listings"),api("GET","/api/posts")]).then(function(r){
     S.people=r[0].people.map(function(p){return {id:p.id,name:p.name,picture:p.picture,street:p.street,done:p.favorsDone,contact:p.contact,phone:p.phone,skills:p.skills.map(mapSkill)}});
-    S.listings=r[1].listings.map(function(l){return {id:l.id,kind:l.kind,by:byUser(l.userId),title:l.title,body:l.body,r:l.rate,u:l.unit,when:timeAgo(l.createdAt),ts:new Date(l.createdAt).getTime()}});
+    S.listings=r[1].listings.map(function(l){return {id:l.id,kind:l.kind,by:byUser(l.userId),title:l.title,body:l.body,r:l.rate,u:l.unit,icon:l.icon||null,when:timeAgo(l.createdAt),ts:new Date(l.createdAt).getTime()}});
     S.posts=r[2].posts.map(function(p){return {id:p.id,by:byUser(p.userId),text:p.text,when:timeAgo(p.createdAt),ts:new Date(p.createdAt).getTime(),likes:p.likes,liked:p.liked,img:!!p.hasImage}})})}
 function enter(r){
   setMe(r);
@@ -565,9 +573,10 @@ document.addEventListener("click",function(e){
     $("#unitrow").hidden=v!=="offer";$("#ratelbl").textContent=v==="offer"?"Your rate (Free to $500)":"Budget (Free to $500)";return}
   if(a==="save-need"){var ti=$("#nt").value.trim();if(!ti){toast("Give your post a title");$("#nt").focus();return}
     var r=+$('#modal [data-in="rate"]').value,kind=modal.kind||"need",unit=kind==="offer"?(modal.unit||"flat"):"flat",body=$("#nb").value.trim();t.disabled=true;
-    api("POST","/api/listings",{kind:kind,title:ti,body:body,rate:r,unit:unit}).then(function(res){
-      S.listings.unshift({id:res.listing.id,kind:kind,by:"me",title:ti,body:body,r:r,u:unit,when:"Just now",ts:Date.now()});
+    api("POST","/api/listings",{kind:kind,title:ti,body:body,rate:r,unit:unit,icon:modal.icon||null}).then(function(res){
+      S.listings.unshift({id:res.listing.id,kind:kind,by:"me",title:ti,body:body,r:r,u:unit,icon:modal.icon||null,when:"Just now",ts:Date.now()});
       closeModal();S.tab="needs";S.filter="all";S.pop=true;renderApp();toast("Posted! Neighbors can see it now.");burst(LASTPT.x,LASTPT.y,50)}).catch(function(e){t.disabled=false;fail(e)});return}
+  if(a==="picon"){modal.icon=v||null;t.parentNode.querySelectorAll(".ipk").forEach(function(b){b.classList.toggle("on",b===t)});return}
   if(a==="add-skill"){skillModal();return}
   if(a==="edit-skill"){var es=S.me.skills.filter(function(k){return String(k.id)===id})[0];if(es)skillModal(es);return}
   if(a==="pick-banner"){bannerModal();return}

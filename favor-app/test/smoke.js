@@ -108,6 +108,12 @@ const ok = (c, m) => { if (!c) { console.error("FAIL", m); process.exit(1); } co
   ok((await b.call("GET", `/api/posts/${p3.j.post.id}/image`)).s === 404, "image is gone");
   ok((await admin.call("POST", "/api/admin/clear", { what: "nope" })).s === 400, "bad clear target refused");
 
+  // v4: icon choice on listings, invalid icon ignored
+  const lw = await a.call("POST", "/api/listings", { kind: "need", title: "Test icon", body: "", rate: 0, unit: "flat", icon: "cake" });
+  ok(lw.j.listing.icon === "cake", "chosen icon saved");
+  const lw2 = await a.call("POST", "/api/listings", { kind: "need", title: "Test bad icon", body: "", rate: 0, unit: "flat", icon: "<script>" });
+  ok(lw2.j.listing.icon === null, "invalid icon ignored");
+
   // messages
   ok((await b.call("POST", `/api/messages/${a.me.id}`, { body: "Can I borrow it?" })).s < 300, "send msg");
   ok((await a.call("GET", "/api/conversations")).j.unread === 1, "unread badge = 1");

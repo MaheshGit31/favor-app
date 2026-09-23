@@ -53,3 +53,7 @@ Set `SEED_STREETS=Aiken` (comma-separated) to approve street names on boot. A na
 ## Posts, photos and storage
 
 Posts are up to 300 characters with an optional photo (up to 30 MB in, resized to 1600px in the browser). Profile photos are up to 20 MB in and resized to 256px. Admins can see database size per category and clear posts, images, messages, listings, profile photos or reports from Admin > Storage.
+
+## Posting: kind, icon, mobile
+
+When posting, people pick "I need help" or "I can help" instead of a three-way kind menu (old "borrow" listings still exist and still filter under Needs a hand). Posters can also pick an icon for their post from a fixed set, or leave it on Auto to match the old keyword-guessing behavior. Modals are full-width sheets on narrow screens with a darker backdrop.

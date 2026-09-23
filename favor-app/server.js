@@ -335,7 +335,8 @@ app.delete("/api/skills/:id", requireOnboarded, async (req, res) => {
 });
 
 /* ---------------- listings ---------------- */
-const listingOut = (l) => ({ id: l.id, userId: l.user_id, kind: l.kind, title: l.title, body: l.body, rate: l.rate, unit: l.unit, createdAt: l.created_at });
+const ICON_KEYS = ["speaker", "mic", "paw", "cake", "bike", "couch", "brush", "book", "leaf", "camera", "ladder", "wrench"];
+const listingOut = (l) => ({ id: l.id, userId: l.user_id, kind: l.kind, title: l.title, body: l.body, rate: l.rate, unit: l.unit, icon: l.icon || null, createdAt: l.created_at });
 app.get("/api/listings", requireOnboarded, async (req, res) => {
   const { rows } = await db.query("SELECT * FROM listings ORDER BY created_at DESC, id DESC LIMIT 200");
   res.json({ listings: rows.map(listingOut) });
@@ -347,7 +348,8 @@ app.post("/api/listings", requireOnboarded, async (req, res) => {
   if (!kind) return bad(res, "Pick a post type.");
   if (!title) return bad(res, "Give your post a title.");
   const body = cleanMultiline(b.body, 600);
-  const { rows } = await db.query("INSERT INTO listings (user_id,kind,title,body,rate,unit) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *", [req.user.id, kind, title, body, rateOf(b.rate), unitOf(b.unit)]);
+  const icon = ICON_KEYS.includes(b.icon) ? b.icon : null;
+  const { rows } = await db.query("INSERT INTO listings (user_id,kind,title,body,rate,unit,icon) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *", [req.user.id, kind, title, body, rateOf(b.rate), unitOf(b.unit), icon]);
   res.status(201).json({ listing: listingOut(rows[0]) });
 });
 app.delete("/api/listings/:id", requireOnboarded, async (req, res) => {
