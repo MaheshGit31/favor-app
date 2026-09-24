@@ -14,8 +14,18 @@ var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function person(id){var k=String(id),i;for(i=0;i<S.people.length;i++)if(String(S.people[i].id)===k)return S.people[i];return {id:id,name:"Neighbor",street:"",picture:"",done:0,skills:[]}}
 function avCls(name){var n=0;for(var i=0;i<name.length;i++)n+=name.charCodeAt(i);return "av"+(n%5)}
+document.addEventListener("error",function(e){
+  var el=e.target;
+  if(!el||el.tagName!=="IMG"||!el.hasAttribute("data-n"))return;
+  var n=el.getAttribute("data-n")||"?",sz=el.getAttribute("data-sz")||"";
+  var d=document.createElement("div");
+  d.className="av "+(sz?sz+" ":"")+avCls(n);
+  d.setAttribute("aria-hidden","true");
+  d.textContent=n.charAt(0);
+  if(el.parentElement)el.parentElement.replaceWith(d)
+},true);
 function av(x,size){var o=typeof x==="string"?{name:x}:x,n=o.name||"?";
-  if(o.picture)return '<div class="av '+(size||"")+' avimg" aria-hidden="true"><img src="'+esc(o.picture)+'" alt="" referrerpolicy="no-referrer"></div>';
+  if(o.picture)return '<div class="av '+(size||"")+' avimg" aria-hidden="true"><img src="'+esc(o.picture)+'" alt="" referrerpolicy="no-referrer" data-n="'+esc(n)+'" data-sz="'+esc(size||"")+'"></div>';
   return '<div class="av '+(size||"")+' '+avCls(n)+'" aria-hidden="true">'+esc(n.charAt(0))+'</div>'}
 function rateLabel(r,u){if(!r)return "Free";return "$"+r+(u==="hr"?" / hr":" flat")}
 function rateChip(r,u,pre){if(!r)return '<span class="chip free">Free</span>';return '<span class="chip rate">'+(pre||"")+rateLabel(r,u)+'</span>'}
